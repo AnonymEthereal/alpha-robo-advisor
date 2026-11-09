@@ -1,10 +1,23 @@
 import json
 import logging
+import os
 from datetime import datetime
 
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+
+# Streamlit Community Cloud Secrets 注入：
+# 将平台侧 st.secrets 中的配置写入 os.environ，使 config.py/ai_service.py
+# 无需改动即可读取 LLM_API_KEY / LLM_BASE_URL / LLM_MODEL 等配置。
+# 本地开发时由 .env 文件（python-dotenv）提供，二者互不冲突。
+try:
+    if st.secrets:
+        for _k, _v in st.secrets.items():
+            if isinstance(_v, str) and not os.environ.get(_k):
+                os.environ[_k] = _v
+except Exception:
+    pass
 
 from config import (
     RISK_QUESTIONS, RISK_LEVEL_MAP, FUND_POOL, DISCLAIMER,
